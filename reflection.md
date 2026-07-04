@@ -4,8 +4,17 @@
 
 **a. Initial design**
 
-- Briefly describe your initial UML design.
-- What classes did you include, and what responsibilities did you assign to each?
+The system is built around four classes that mirror the real-world entities in a pet care workflow:
+
+- **Task** — a Python dataclass representing a single care action. It holds `description`, `task_type` (walk, feeding, medication, etc.), `time` ("HH:MM"), `duration_minutes`, `priority` ("low"/"medium"/"high"), `frequency` ("once"/"daily"/"weekly"), `due_date`, `completed` status, and the `pet_name` it belongs to. Its two methods are `mark_complete()` (which sets `completed = True` and schedules the next occurrence for recurring tasks) and `is_recurring()` (returns True if frequency is not "once").
+
+- **Pet** — a dataclass holding a pet's `name`, `species`, `breed`, and a list of `Task` objects. It exposes `add_task()` to attach tasks, `list_tasks()` to retrieve all tasks, and `get_pending_tasks()` to return only incomplete ones.
+
+- **Owner** — holds the owner's `name` and a list of `Pet` objects. It provides `add_pet()` to register a new pet, `list_pets()` to view them, and `get_all_tasks()` which aggregates every task across all pets into a single flat list.
+
+- **Scheduler** — the intelligence layer. It holds a reference to the `Owner` and operates on all tasks across all pets. Its methods are: `sort_by_time()` (sorts by HH:MM string), `sort_by_priority()` (sorts high → medium → low, then by time), `filter_tasks(pet_name, completed)` (returns a filtered subset), `detect_conflicts()` (returns warning strings for tasks scheduled at the same time for the same pet), and `get_todays_schedule()` (returns all tasks due today, sorted by priority then time).
+
+The three core actions I designed around are: **add a pet and its tasks**, **generate a sorted daily schedule**, and **detect task conflicts**.
 
 **b. Design changes**
 
