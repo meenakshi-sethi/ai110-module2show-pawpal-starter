@@ -139,18 +139,20 @@ class Scheduler:
         return tasks
 
     def detect_conflicts(self) -> list[str]:
-        """Return warning strings for tasks scheduled at the same time for the same pet."""
+        """Return warning strings for any two tasks scheduled at the same time (same or different pets)."""
         warnings: list[str] = []
-        seen: dict[tuple[str, str], str] = {}   # (pet_name, time) -> first task description
+        seen: dict[str, Task] = {}   # time -> first task seen at that time
         for task in self.owner.get_all_tasks():
-            key = (task.pet_name, task.time)
+            key = task.time
             if key in seen:
+                first = seen[key]
                 warnings.append(
-                    f"⚠️  Conflict for {task.pet_name} at {task.time}: "
-                    f'"{seen[key]}" and "{task.description}"'
+                    f"⚠️  Conflict at {task.time}: "
+                    f'"{first.description}" ({first.pet_name}) '
+                    f'and "{task.description}" ({task.pet_name})'
                 )
             else:
-                seen[key] = task.description
+                seen[key] = task
         return warnings
 
     def get_todays_schedule(self) -> list[Task]:

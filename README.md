@@ -44,14 +44,42 @@ pip install -r requirements.txt
 
 ## 🖥️ Sample Output
 
-Paste a sample of your app's CLI or Streamlit output here so a reader can see what a generated plan looks like:
+Run the CLI demo with:
+
+```bash
+python main.py
+```
 
 ```
-# e.g.:
-# Daily plan for Biscuit (Golden Retriever):
-#   08:00 — Morning walk (30 min) [priority: high]
-#   09:00 — Feeding (10 min) [priority: high]
-#   ...
+============================================================
+  🐾  PawPal+ Daily Planner  —  Saturday, July 04 2026
+  Owner: Jordan
+============================================================
+
+📅  TODAY'S SCHEDULE  (sorted by priority → time)
+
+╭────────┬─────────────────────────┬─────────┬────────────┬────────────┬─────────────┬────────╮
+│ Time   │ Task                    │ Pet     │ Priority   │ Duration   │ Frequency   │ Done   │
+├────────┼─────────────────────────┼─────────┼────────────┼────────────┼─────────────┼────────┤
+│ 07:00  │ 🍖 Morning feeding       │ Biscuit │ HIGH       │ 10 min     │ daily       │ ⬜      │
+│ 07:30  │ 🍖 Morning feeding       │ Mochi   │ HIGH       │ 10 min     │ daily       │ ⬜      │
+│ 08:00  │ 💊 Heartworm medication  │ Biscuit │ HIGH       │ 5 min      │ weekly      │ ⬜      │
+│ 08:00  │ 🏥 Vet check-up          │ Mochi   │ HIGH       │ 60 min     │ once        │ ⬜      │
+│ 17:30  │ 🦮 Evening walk          │ Biscuit │ HIGH       │ 30 min     │ daily       │ ⬜      │
+│ 11:00  │ 🧸 Playtime / enrichment │ Mochi   │ MEDIUM     │ 20 min     │ daily       │ ⬜      │
+│ 14:00  │ ✂️  Grooming session     │ Biscuit │ LOW        │ 45 min     │ once        │ ⬜      │
+╰────────┴─────────────────────────┴─────────┴────────────┴────────────┴─────────────┴────────╯
+
+🚨  CONFLICT DETECTION
+
+  ⚠️  Conflict at 08:00: "Heartworm medication" (Biscuit) and "Vet check-up" (Mochi)
+
+🔄  RECURRING TASK DEMO
+
+  Completing: 'Morning feeding' for Biscuit (due 2026-07-04)
+  ✅ Marked complete. Next occurrence auto-created: due 2026-07-05
+
+============================================================
 ```
 
 ## 🧪 Testing PawPal+
