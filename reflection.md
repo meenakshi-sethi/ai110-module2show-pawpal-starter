@@ -18,8 +18,7 @@ The three core actions I designed around are: **add a pet and its tasks**, **gen
 
 **b. Design changes**
 
-- Did your design change during implementation?
-- If yes, describe at least one change and why you made it.
+One meaningful change occurred during the conflict detection implementation. The initial UML design scoped `detect_conflicts()` to flag conflicts *for the same pet only* (using `(pet_name, time)` as the lookup key). During implementation it became clear that an owner physically cannot be in two places at once, so a conflict between Biscuit's medication at 08:00 and Mochi's vet check-up at 08:00 is equally problematic. The key was changed to just `time`, making the detector cross-pet by default. This was a small but important correctness fix that the initial design had overlooked.
 
 ---
 
@@ -39,13 +38,11 @@ The conflict detector flags any two tasks that share the exact same `HH:MM` stri
 
 **a. How you used AI**
 
-- How did you use AI tools during this project (for example: design brainstorming, debugging, refactoring)?
-- What kinds of prompts or questions were most helpful?
+GitHub Copilot (Claude Sonnet) was used throughout every phase via VS Code chat. The most effective uses were: (1) **design brainstorming** — asking "design 4 OOP classes for a pet care app with these responsibilities" to generate the initial UML and class skeletons rapidly; (2) **scaffolding** — generating `pawpal_system.py` stubs from the UML description, saving significant boilerplate time; (3) **test generation** — asking "write pytest tests for sorting, recurrence, and conflict detection" produced a solid starting suite; and (4) **wiring the UI** — asking how `st.session_state` works to persist objects across Streamlit reruns. The most helpful prompt pattern was attaching a specific file and asking a targeted question (e.g., "given this Task dataclass, how should mark_complete handle recurring tasks using timedelta?") rather than open-ended questions.
 
 **b. Judgment and verification**
 
-- Describe one moment where you did not accept an AI suggestion as-is.
-- How did you evaluate or verify what the AI suggested?
+The AI's initial `detect_conflicts()` implementation scoped conflicts to the same pet only, using `(pet_name, time)` as the dictionary key. I rejected this because a single owner managing multiple pets cannot attend to two pets at the same time slot — the bug would have silently missed real scheduling conflicts in the demo data (Biscuit's medication and Mochi's vet check-up both at 08:00). I verified the fix by manually running `main.py` and confirming the conflict warning appeared, then adding a dedicated pytest test (`test_detect_conflicts_flags_same_time`) to lock in the correct behavior permanently.
 
 ---
 
@@ -65,12 +62,12 @@ Confidence level: 5/5 for the implemented behaviors. All 6 tests pass consistent
 
 **a. What went well**
 
-- What part of this project are you most satisfied with?
+The "CLI-first" workflow worked extremely well. Building and verifying all logic in `pawpal_system.py` and `main.py` before touching `app.py` meant the Streamlit integration was straightforward — there were no surprises because the backend was already proven. The tabulate-formatted CLI output also made it easy to visually confirm that sorting, filtering, and conflict detection were all behaving correctly before writing a single test.
 
 **b. What you would improve**
 
-- If you had another iteration, what would you improve or redesign?
+In the next iteration I would add duration-aware conflict detection — instead of only flagging exact time matches, check whether any two tasks' time windows overlap (start_time + duration_minutes). I would also add a data persistence layer so the Owner and Pet state survives between Streamlit sessions, removing the need to re-enter everything on each page reload.
 
 **c. Key takeaway**
 
-- What is one important thing you learned about designing systems or working with AI on this project?
+The most important lesson was that **AI accelerates scaffolding but cannot replace design judgment**. The AI generated correct-looking code for conflict detection that had a subtle logical flaw (same-pet only). Without understanding the system's intent — that one owner manages all pets — I would have shipped a broken feature that passed a naive test. Being the "lead architect" means staying responsible for the *why* behind every design decision, using AI to handle the *how* faster.

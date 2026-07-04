@@ -133,12 +133,35 @@ tests/test_pawpal.py::test_filter_tasks_by_pet_name PASSED               [100%]
 
 ## 📸 Demo Walkthrough
 
-Describe your app in numbered steps so a reader can follow along without watching a video:
+### Running the CLI demo
 
-1. <!-- Describe this step -->
-2. <!-- Describe this step -->
-3. <!-- Describe this step -->
-4. <!-- Describe this step -->
-5. <!-- Add more steps as needed -->
+```bash
+python main.py
+```
 
-**Screenshot or video** *(optional)*: <!-- Insert a screenshot or link to a demo video here -->
+This creates owner **Jordan** with two pets — **Biscuit** (Golden Retriever) and **Mochi** (Siamese) — and 7 tasks across both pets. The output shows:
+- Today's schedule sorted by **priority → time** (HIGH tasks first, then MEDIUM, then LOW)
+- All tasks sorted by **time only**
+- A filtered view of **pending tasks for Biscuit**
+- A **conflict warning** for 08:00 (Biscuit's medication overlaps Mochi's vet check-up)
+- A **recurring task demo**: Biscuit's daily morning feeding is marked complete and a new task is auto-created for the next day
+
+See the full CLI output in the [Sample Output](#%EF%B8%8F-sample-output) section above.
+
+### Running the Streamlit app
+
+```bash
+streamlit run app.py
+```
+
+1. **Set your name** — Enter your name in the sidebar and click "Set / Update Owner". This creates an `Owner` object stored in `st.session_state` that persists for the entire session.
+2. **Add a pet** — Fill in the pet name, species, and breed in the sidebar form and click "Add Pet". Each submission calls `Owner.add_pet()` and stores a real `Pet` object in memory.
+3. **Schedule a task** — Select a pet, fill in the task details (description, type, time, priority, frequency, due date), and click "Add Task". This calls `Pet.add_task()` with a fully typed `Task` dataclass instance.
+4. **Generate schedule** — Click the "Generate schedule" button. The app calls `Scheduler.detect_conflicts()` and displays any time-slot conflicts as `st.warning()` banners. It then shows today's tasks sorted by priority → time, and all tasks sorted by time.
+5. **Review your pets** — The "Your Pets" section at the bottom shows each pet in an expandable card with their pending task count and a full task table.
+
+### Key Scheduler behaviors visible in the UI
+- **Priority-first sorting**: HIGH tasks always appear before MEDIUM and LOW in Today's Schedule
+- **Conflict warnings**: Overlapping time slots trigger orange `st.warning()` banners before the schedule is displayed
+- **Cross-pet scheduling**: The schedule aggregates tasks from all pets into one unified view
+- **Recurring task logic**: Tasks marked with `daily` or `weekly` frequency automatically generate their next occurrence when `mark_complete()` is called
