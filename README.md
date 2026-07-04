@@ -165,3 +165,53 @@ streamlit run app.py
 - **Conflict warnings**: Overlapping time slots trigger orange `st.warning()` banners before the schedule is displayed
 - **Cross-pet scheduling**: The schedule aggregates tasks from all pets into one unified view
 - **Recurring task logic**: Tasks marked with `daily` or `weekly` frequency automatically generate their next occurrence when `mark_complete()` is called
+
+---
+
+## ⚡ Advanced Scheduling Logic
+
+Beyond simple time sorting, PawPal+ implements **priority-based scheduling** via `Scheduler.sort_by_priority()`. Tasks are ordered by priority tier first (high → medium → low), then by time as a tiebreaker within each tier. This ensures a pet owner always sees the most critical care actions at the top of their schedule, regardless of when they are scheduled.
+
+### How it works
+
+`sort_by_priority()` uses a composite sort key `(PRIORITY_ORDER[priority], time)` where `PRIORITY_ORDER = {"high": 0, "medium": 1, "low": 2}`. This is distinct from `sort_by_time()` which sorts purely chronologically.
+
+### CLI output example — priority sort across two pets
+
+```
+╭────────┬─────────────────────────┬─────────┬────────────┬────────────╮
+│ Time   │ Task                    │ Pet     │ Priority   │ Duration   │
+├────────┼─────────────────────────┼─────────┼────────────┼────────────┤
+│ 07:00  │ 🍖 Morning feeding       │ Biscuit │ HIGH       │ 10 min     │
+│ 08:00  │ 🏥 Vet check-up          │ Mochi   │ HIGH       │ 60 min     │
+│ 17:30  │ 🦮 Evening walk          │ Biscuit │ HIGH       │ 30 min     │
+│ 11:00  │ 🧸 Playtime / enrichment │ Mochi   │ MEDIUM     │ 20 min     │
+│ 14:00  │ ✂️  Grooming session     │ Biscuit │ LOW        │ 45 min     │
+╰────────┴─────────────────────────┴─────────┴────────────┴────────────╯
+```
+
+All three HIGH tasks appear first (sorted by time within that tier), MEDIUM next, LOW last — regardless of their scheduled times. Compare this to `sort_by_time()` which would place Grooming (14:00) before Evening walk (17:30) regardless of their LOW vs HIGH priority.
+
+---
+
+## 🎨 Professional UI and Output Formatting
+
+The CLI demo (`main.py`) uses structured formatting to produce readable, scannable output instead of raw Python object strings.
+
+### Libraries and functions used
+
+| Feature | Library / Function | Details |
+|---------|--------------------|---------|
+| Table rendering | `tabulate` (v0.9+) | `tablefmt="rounded_outline"` for clean bordered tables |
+| Task type icons | Custom `TASK_EMOJI` dict | Maps task types to emojis: 🦮 walk, 🍖 feeding, 💊 medication, ✂️ grooming, 🧸 enrichment, 🏥 appointment |
+| Completion indicator | Unicode symbols | `✅` for completed, `⬜` for pending |
+| Conflict indicator | Unicode prefix | `⚠️` prefixes every conflict warning string |
+| Section headers | Unicode + separators | `📅`, `⏰`, `🔍`, `🚨`, `🔄` prefix each output section |
+
+### Installation
+
+```bash
+pip install tabulate
+```
+
+`tabulate` is included in `requirements.txt`.
