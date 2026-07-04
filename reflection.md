@@ -27,13 +27,11 @@ The three core actions I designed around are: **add a pet and its tasks**, **gen
 
 **a. Constraints and priorities**
 
-- What constraints does your scheduler consider (for example: time, priority, preferences)?
-- How did you decide which constraints mattered most?
+The scheduler considers two main constraints: **time** (the `HH:MM` slot a task is assigned to) and **priority** (high / medium / low). A secondary constraint is **frequency** — whether a task is once, daily, or weekly — which drives recurring task creation. I decided priority matters most because a pet owner should always see critical care (medication, feeding) before optional enrichment activities, even if an enrichment task is earlier in the day. Time is the tiebreaker within the same priority tier.
 
 **b. Tradeoffs**
 
-- Describe one tradeoff your scheduler makes.
-- Why is that tradeoff reasonable for this scenario?
+The conflict detector flags any two tasks that share the exact same `HH:MM` string, across any pets. This is intentionally lightweight — it does **not** check for overlapping durations (e.g., a 60-minute appointment at 08:00 overlapping a 30-minute walk at 08:30). That tradeoff is reasonable here because the app targets a single owner managing a small number of pets at home; exact-time collisions are the most actionable signal, and duration-overlap detection would require significantly more complex interval arithmetic without meaningfully improving the user experience at this scale.
 
 ---
 
