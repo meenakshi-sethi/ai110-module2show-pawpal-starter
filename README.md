@@ -84,19 +84,41 @@ python main.py
 
 ## 🧪 Testing PawPal+
 
+Run the full test suite:
+
 ```bash
-# Run the full test suite:
-pytest
-
-# Run with coverage:
-pytest --cov
+python -m pytest tests/test_pawpal.py -v
 ```
 
-Sample test output:
+### Test Coverage
+
+| Test | What it verifies |
+|------|-----------------|
+| `test_mark_complete_sets_completed_true` | `Task.mark_complete()` sets `completed = True` |
+| `test_add_task_increases_pet_task_count` | `Pet.add_task()` increases the pet's task list length |
+| `test_sort_by_time_returns_chronological_order` | `Scheduler.sort_by_time()` returns tasks in HH:MM order |
+| `test_daily_task_creates_next_occurrence` | Marking a daily task complete auto-creates a next-day task via `timedelta` |
+| `test_detect_conflicts_flags_same_time` | `Scheduler.detect_conflicts()` flags two tasks at the same time slot |
+| `test_filter_tasks_by_pet_name` | `Scheduler.filter_tasks(pet_name=...)` returns only that pet's tasks |
+
+### Passing Test Output
 
 ```
-# Paste your pytest output here
+============================= test session starts ==============================
+platform darwin -- Python 3.9.6, pytest-8.4.2, pluggy-1.6.0
+collected 6 items
+
+tests/test_pawpal.py::test_mark_complete_sets_completed_true PASSED      [ 16%]
+tests/test_pawpal.py::test_add_task_increases_pet_task_count PASSED      [ 33%]
+tests/test_pawpal.py::test_sort_by_time_returns_chronological_order PASSED [ 50%]
+tests/test_pawpal.py::test_daily_task_creates_next_occurrence PASSED     [ 66%]
+tests/test_pawpal.py::test_detect_conflicts_flags_same_time PASSED       [ 83%]
+tests/test_pawpal.py::test_filter_tasks_by_pet_name PASSED               [100%]
+
+============================== 6 passed in 0.01s ===============================
 ```
+
+**Confidence Level: ⭐⭐⭐⭐⭐ (5/5)** — All 6 tests pass, covering the two required behaviors (task completion, task addition) plus sorting correctness, recurring task recurrence, conflict detection, and filtering. The only untested edge case is duration-overlap conflict detection, which is a documented tradeoff.
 
 ## 📐 Smarter Scheduling
 

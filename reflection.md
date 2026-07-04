@@ -53,13 +53,11 @@ The conflict detector flags any two tasks that share the exact same `HH:MM` stri
 
 **a. What you tested**
 
-- What behaviors did you test?
-- Why were these tests important?
+Six behaviors were tested: (1) `mark_complete()` sets `completed = True`, (2) `add_task()` increases the pet's task count, (3) `sort_by_time()` returns tasks in chronological order, (4) marking a daily task complete auto-creates a next-day occurrence via `timedelta`, (5) `detect_conflicts()` flags two tasks at the same time slot, and (6) `filter_tasks(pet_name=...)` returns only the specified pet's tasks. These tests are important because they cover the two required behaviors plus all four algorithmic features — if any of these break, the scheduler's core value to the user is compromised.
 
 **b. Confidence**
 
-- How confident are you that your scheduler works correctly?
-- What edge cases would you test next if you had more time?
+Confidence level: 5/5 for the implemented behaviors. All 6 tests pass consistently. The main untested edge case is duration-based overlap detection (e.g., a 60-min task at 08:00 overlapping a 30-min task at 08:30) — the current detector only flags exact time matches. If I had more time, I would add tests for: an owner with zero pets, a pet with no tasks, a weekly recurring task advancing 7 days, and priority-sort stability when two tasks share the same priority and time.
 
 ---
 
